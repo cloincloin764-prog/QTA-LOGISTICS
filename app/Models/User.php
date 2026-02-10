@@ -6,11 +6,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    
+     use HasApiTokens, HasFactory, Notifiable;
+    /**
+     * Role constants (LOCKED)
+     */
+    public const ROLE_ADMIN    = 'admin';
+    public const ROLE_STAFF    = 'staff';
+    public const ROLE_CUSTOMER = 'customer';
+    public const ROLE_DRIVER   = 'driver';
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +30,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -34,9 +44,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Attribute casting
      */
     protected function casts(): array
     {
@@ -44,5 +52,49 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * =========================
+     * Relationships
+     * =========================
+     */
+
+    // Customer → many parcels
+    public function parcels()
+    {
+        return $this->hasMany(Parcel::class);
+    }
+
+    // Driver → one driver profile
+    public function driver()
+    {
+        return $this->hasOne(Driver::class);
+    }
+
+    /**
+     * =========================
+     * Role helpers
+     * =========================
+     */
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->role === self::ROLE_STAFF;
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this->role === self::ROLE_CUSTOMER;
+    }
+
+    public function isDriver(): bool
+    {
+        return $this->role === self::ROLE_DRIVER;
     }
 }
