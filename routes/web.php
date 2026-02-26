@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Import Controllers
+// Import All Controllers
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ParcelController;
 use App\Http\Controllers\ProfileController;
@@ -13,40 +13,51 @@ use App\Http\Controllers\CustomerDashboardController;
 
 /*
 |--------------------------------------------------------------------------
-| 1. Public Routes
+| 1. Public Facing Routes (No Auth Required)
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
 
-Route::get('/about', [App\Http\Controllers\Controller::class, 'about'])->name('about');
+Route::get('/', function () { return view('home'); })->name('home');
+Route::get('/about', function () { return view('about'); })->name('about');
+Route::get('/services', function () { return view('services'); })->name('services'); // Added Service Route
+Route::get('/privacy-policy', function () { return view('legal.privacy'); })->name('privacy');
+Route::get('/terms-and-conditions', function () { return view('legal.terms'); })->name('terms');
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
 
-// Public Parcel Tracking (SRS 3.5)
+// Public Tracking System (SRS 3.5)
 Route::get('/track', [PublicTrackingController::class, 'index'])->name('tracking.index');
 Route::get('/track/{tracking_code}', [PublicTrackingController::class, 'track'])->name('tracking.show');
 
-// Driver Portal (Token Based - No Login Required)
+// Driver Portal (Token Based - SRS 2.3: No Login Required)
 Route::get('/portal/{token}', [DriverPortalController::class, 'showPortal'])->name('driver.portal');
 Route::post('/portal/{token}/update/{parcel}', [DriverPortalController::class, 'updateStatus'])->name('driver.portal.update');
 
 
 /*
 |--------------------------------------------------------------------------
-| 2. Authentication & Role Redirection
+| 2. Authentication & Traffic Cop (Redirection)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    // The "Traffic Cop" Route: Redirects users to the correct dashboard based on role
+    // The "Traffic Cop": Decides which dashboard to send the user to
     Route::get('/dashboard', function () {
+        /** @var \App\Models\User $user */
         $user = auth()->user();
+
         if ($user->isAdmin() || $user->isStaff()) {
             return redirect()->route('admin.dashboard');
         }
-        return redirect()->route('customer.dashboard');
+
+        if ($user->isCustomer()) {
+            return redirect()->route('customer.dashboard');
+        }
+
+        return redirect()->route('home');
     })->name('dashboard');
 
     /*
@@ -58,6 +69,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // Admin Dashboard Overview
         Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
+        Route::post('/parcels/bulk-action', [AdminController::class, 'bulkAction'])->name('parcels.bulk_action');
 
         // Parcel Management
         Route::get('/parcels', [AdminController::class, 'indexParcels'])->name('parcels.index');
@@ -71,7 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/drivers/create', [AdminController::class, 'createDriver'])->name('drivers.create');
         Route::post('/drivers/store', [AdminController::class, 'storeDriver'])->name('drivers.store');
 
-        // Driver Assignment
+        // Driver Assignment (Logic handled by ParcelController)
         Route::get('/parcels/{parcel}/assign', [AdminController::class, 'showAssignForm'])->name('parcels.assign');
         Route::post('/parcels/{parcel}/assign', [ParcelController::class, 'assignDriver'])->name('parcels.process_assignment');
     });
@@ -84,11 +96,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:customer'])->prefix('customer')->name('customer.')->group(function () {
         Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/parcel/create', [CustomerDashboardController::class, 'create'])->name('parcels.create');
+        Route::post('/parcel/store', [CustomerDashboardController::class, 'store'])->name('parcels.store');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | 5. Shared Profile Routes
+    | 5. User Profile (Shared)
     |--------------------------------------------------------------------------
     */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -11,6 +11,26 @@ class AdminController extends Controller
 {
     // --- DASHBOARD & UTILS ---
 
+
+public function bulkAction(Request $request)
+{
+    $ids = $request->input('selected_ids');
+    $action = $request->input('action');
+
+    if (empty($ids)) return back()->with('error', 'No items selected');
+
+    if ($action === 'delete') {
+        Parcel::whereIn('id', $ids)->delete();
+        $msg = count($ids) . " parcels deleted.";
+    } elseif ($action === 'mark_delivered') {
+        Parcel::whereIn('id', $ids)->update(['status' => 'delivered']);
+        $msg = count($ids) . " parcels marked as delivered.";
+    }
+
+    return back()->with('success', $msg);
+}
+
+
     public function dashboard()
     {
         return view('admin.dashboard');
@@ -27,13 +47,31 @@ class AdminController extends Controller
     /**
      * List all parcels (Paginated)
      */
-    public function indexParcels()
-    {
-        // Fetch all parcels with pagination (15 per page)
-        $parcels = Parcel::with(['user', 'driver.user'])->latest()->paginate(15);
+public function indexParcels(Request $request)
+{
+    $query = Parcel::with(['user', 'driver.user']);
 
-        return view('admin.parcels.index', compact('parcels'));
+    // 1. Search Logic
+    if ($request->filled('search')) {
+        $query->where('tracking_code', 'like', '%' . $request->search . '%')
+              ->orWhere('receiver_name', 'like', '%' . $request->search . '%');
     }
+
+    // 2. Filter by Status
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    // 3. Sorting
+    $sortField = $request->get('sort', 'created_at');
+    $sortOrder = $request->get('order', 'desc');
+    $query->orderBy($sortField, $sortOrder);
+
+    $parcels = $query->paginate($request->get('per_page', 10));
+
+    return view('admin.parcels.index', compact('parcels'));
+}
+
 
     /**
      * Show Create Parcel Form

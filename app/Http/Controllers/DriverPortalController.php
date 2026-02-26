@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Driver;
@@ -8,23 +10,33 @@ class DriverPortalController extends Controller
 {
     public function showPortal($token)
     {
+        // Find the specific driver by token
         $driver = Driver::where('api_token', $token)->with('user')->firstOrFail();
         
-        // Only show parcels assigned to them that aren't finished
+        // Get parcels assigned to this driver that are not yet delivered
         $parcels = Parcel::where('driver_id', $driver->id)
-            ->whereNotIn('status', [Parcel::STATUS_DELIVERED, Parcel::STATUS_CANCELLED])
+            ->whereIn('status', [Parcel::STATUS_ASSIGNED, Parcel::STATUS_OUT_FOR_DELIVERY])
             ->latest()
             ->get();
 
+        // Note: We send 'driver' (singular) to the view
         return view('driver.portal', compact('driver', 'parcels', 'token'));
     }
 
     public function updateStatus(Request $request, $token, Parcel $parcel)
     {
         $driver = Driver::where('api_token', $token)->firstOrFail();
-        if ($parcel->driver_id !== $driver->id) abort(403);
+        
+        if ($parcel->driver_id !== $driver->id) {
+            abort(403, 'Unauthorized parcel update.');
+        }
 
-        $parcel->changeStatus($request->status, $request->comment);
-        return back()->with('success', 'Status updated successfully!');
+        try {
+            // Using the model method you built
+            $parcel->changeStatus($request->status, $request->comment);
+            return back()->with('success', 'Parcel status updated successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

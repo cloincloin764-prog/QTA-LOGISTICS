@@ -1,122 +1,143 @@
-@extends('layouts.app')
+@extends('layouts.guest')
 
 @section('content')
-
-<body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-2 lg:p-3 items-center lg:justify-top min-h-screen flex-col font-sans">
-
-    <!-- Main Hero Container -->
-    <!-- Added duration-500 for smooth loading if you add fade-ins later -->
-<!-- Main Hero Container -->
-<main class="relative w-full h-[calc(100vh-1rem)] lg:h-[calc(100vh-1.5rem)] min-h-[700px] rounded-[2rem] overflow-hidden shadow-2xl group">
+<div x-data="{ y: 0 }" @window.scroll.window="y = window.pageYOffset" class="relative overflow-x-hidden">
     
-    <!-- Background Image (Zoom effect on hover) -->
-    <img 
-        src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop" 
-        alt="Logistics Truck" 
-        class="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] ease-in-out group-hover:scale-105"
-    />
-    
-    <!-- Dark Overlay -->
-    <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70"></div>
+<!-- HERO -->
+<section class="relative min-h-screen flex items-center px-6 lg:px-20 overflow-hidden">
 
-    <!-- Navigation Bar -->
-    <nav class="absolute top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-5 lg:px-10">
-        
-        <!-- Logo -->
-        <div class="flex items-center gap-3 cursor-pointer">
-            <div class="bg-orange-500 w-9 h-9 rounded-lg flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+    <!-- Background Glow -->
+    <div class="absolute top-[-200px] left-[20%] w-[700px] h-[700px] bg-green-100 rounded-full blur-[160px] opacity-40"></div>
+    <div class="absolute bottom-[-200px] right-[10%] w-[600px] h-[600px] bg-orange-100 rounded-full blur-[160px] opacity-40"></div>
+
+    <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center">
+
+        <!-- LEFT -->
+        <div class="space-y-8 text-center lg:text-left">
+
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-full shadow-sm">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-xs font-semibold text-gray-600 tracking-wide">
+                    Smart Logistics Platform
+                </span>
             </div>
-            <span class="text-white font-bold text-xl tracking-wide drop-shadow-md">Gogistic Pro</span>
-        </div>
 
-        <!-- Center Menu -->
-        <div class="hidden md:flex items-center gap-1 bg-white/90 backdrop-blur-md px-1.5 py-1.5 rounded-full shadow-2xl transition-all hover:bg-white">
-            <a href="#" class="bg-orange-500 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-md transition-transform hover:scale-105">Home</a>
-            <a href="#" class="text-gray-600 hover:text-black hover:bg-gray-100 px-5 py-2 rounded-full text-sm font-medium transition-all">About Us</a>
-            <a href="#" class="text-gray-600 hover:text-black hover:bg-gray-100 px-5 py-2 rounded-full text-sm font-medium transition-all">Services</a>
-            <a href="#" class="text-gray-600 hover:text-black hover:bg-gray-100 px-5 py-2 rounded-full text-sm font-medium transition-all">Testimonials</a>
-            <a href="#" class="text-gray-600 hover:text-black hover:bg-gray-100 px-5 py-2 rounded-full text-sm font-medium transition-all">Blogs</a>
-        </div>
+            <!-- Title -->
+            <h1 class="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900">
+                Fast & Reliable  
+                <span class="bg-gradient-to-r from-green-700 to-green-500 bg-clip-text text-transparent">
+                    Intercity Delivery
+                </span>
+            </h1>
 
-        <!-- Contact Button with Sliding Arrow -->
-        <a href="#" class="group/btn flex items-center gap-3 pl-5 pr-1.5 py-1.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-white transition-all duration-300 hover:bg-white/20 hover:border-white/50 hover:shadow-lg">
-            <span class="text-sm font-medium">Contact now</span>
-            <div class="bg-orange-500 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 group-hover/btn:bg-orange-400">
-                <!-- ARROW SLIDE ANIMATION HERE: translate-x-0.5 and -translate-y-0.5 -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white -rotate-45 transition-transform duration-300 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-            </div>
-        </a>
-    </nav>
+            <!-- Description -->
+            <p class="text-lg text-gray-600 max-w-xl mx-auto lg:mx-0">
+                Manage shipments, track parcels in real-time, and connect cities
+                through one powerful logistics platform built for modern businesses.
+            </p>
 
-    <!-- Hero Content -->
-    <div class="relative z-10 flex flex-col justify-center items-center h-full w-full text-center px-4 pt-16">
-        <h1 class="text-5xl md:text-7xl lg:text-8xl font-semibold text-white tracking-tight leading-[1.1] mb-6 drop-shadow-xl">
-            Fast and Sustainable <br />
-            Logistic Solution
-        </h1>
-        <p class="text-white/90 text-base md:text-lg font-light max-w-xl mx-auto mb-12 leading-relaxed drop-shadow-md">
-            Measures how quickly goods are delivered from order placement <br class="hidden md:block"/> to final destination.
-        </p>
-    </div>
+            <!-- CTA -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
 
-    <!-- Bottom Section -->
-    <div class="absolute bottom-0 left-0 w-full z-20 px-6 pb-6 lg:px-12 lg:pb-10 flex flex-col md:flex-row items-end justify-between gap-8">
-        
-        <!-- Bottom Left: Round Button -->
-        <div class="max-w-xs text-white">
-            <h3 class="text-xl font-semibold mb-2 drop-shadow-md">Reliable, Fast & Cost Effective</h3>
-            <p class="text-white/70 text-sm mb-6 font-light">Solutions for all your Cargo needs.</p>
-            
-            <!-- BUTTON SLIDE ANIMATION -->
-            <button class="w-14 h-14 rounded-full border border-white/30 flex items-center justify-center backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-black hover:border-white hover:scale-105 group/round">
-                <!-- Arrow moves diagonally up-right -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition-transform duration-300 group-hover/round:translate-x-1 group-hover/round:-translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-            </button>
-        </div>
-
-        <!-- Bottom Right: Glass Card -->
-        <div class="w-full md:w-auto md:min-w-[480px] bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-2.5 flex gap-4 transition-colors duration-300 hover:bg-white/15 shadow-2xl">
-            
-            <div class="flex-1 p-6 flex flex-col justify-between">
-                <p class="text-white text-2xl leading-tight font-medium drop-shadow-sm">
-                    We have all kinds <br/> of solutions of <br/> transport
-                </p>
-                
-                <!-- LEARN MORE LINK SLIDE ANIMATION -->
-                <a href="#" class="flex items-center gap-3 text-white/80 text-sm mt-4 group/link transition-colors hover:text-orange-400">
-                    Learn more 
-                    <!-- The span holding the arrow slides right (translate-x-2) -->
-                    <span class="bg-white/10 rounded-full p-1 inline-flex items-center justify-center transition-all duration-300 group-hover/link:translate-x-2 group-hover/link:bg-orange-500 group-hover/link:text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </span>
+                <a href="/track"
+                   class="px-8 py-4 bg-green-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition">
+                    Track Parcel
                 </a>
+
+                <a href="/register"
+                   class="px-8 py-4 bg-white border border-gray-300 text-gray-800 font-semibold rounded-xl hover:bg-gray-50 transition">
+                    Become a Partner
+                </a>
+
             </div>
 
-            <!-- Images (Zoom on hover) -->
-            <div class="flex gap-2 h-44">
-                <div class="w-20 h-full rounded-2xl overflow-hidden relative group/img">
-                    <img src="https://images.unsplash.com/photo-1494412574643-35d32469f425?q=80&w=200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 transition-transform duration-500 group-hover/img:scale-110" alt="Containers" />
+            <!-- Trust -->
+            <div class="flex items-center gap-6 justify-center lg:justify-start pt-4 text-sm text-gray-500">
+                <span>Trusted by logistics teams</span>
+                <div class="flex -space-x-2">
+                    <img class="w-8 h-8 rounded-full border" src="https://i.pravatar.cc/100?img=1">
+                    <img class="w-8 h-8 rounded-full border" src="https://i.pravatar.cc/100?img=2">
+                    <img class="w-8 h-8 rounded-full border" src="https://i.pravatar.cc/100?img=3">
                 </div>
-                <div class="w-20 h-full rounded-2xl overflow-hidden relative group/img">
-                    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=200&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 transition-transform duration-500 group-hover/img:scale-110" alt="Crane" />
-                </div>
-                <div class="w-20 h-full rounded-2xl bg-[#FDFDFC] flex items-center justify-center relative overflow-hidden group/last">
-                     <div class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center transition-all duration-300 group-hover/last:bg-orange-500 group-hover/last:border-orange-500 group-hover/last:text-white">
-                         <!-- Small arrow rotates -->
-                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-black group-hover/last:text-white -rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="relative hidden lg:block">
+
+            <div class="bg-white p-6 rounded-3xl shadow-2xl border border-gray-100">
+                <img src="{{ asset('images/logistic.jpg') }}" 
+     class="rounded-2xl w-full h-[520px] object-cover">
+            </div>
+
+            <!-- Floating Card -->
+            <div class="absolute -bottom-8 -left-8 bg-white p-6 rounded-2xl shadow-xl border">
+                <p class="text-3xl">📦</p>
+                <p class="text-sm font-semibold text-gray-700">Shipment In Transit</p>
+            </div>
+
+            <!-- Floating Stats -->
+            <div class="absolute -top-8 -right-8 bg-green-800 text-white px-6 py-4 rounded-2xl shadow-xl">
+                <p class="text-sm opacity-80">Active Deliveries</p>
+                <p class="text-2xl font-bold">2,481</p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+    <!-- CAROUSEL SECTION -->
+    <section class="py-32 bg-white rounded-[5rem] shadow-sm relative z-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 mb-16 flex justify-between items-end">
+            <div>
+                <h2 class="text-5xl font-black text-gray-900 tracking-tight">Our Core <span class="text-[#054a32]">Services.</span></h2>
+                <p class="text-gray-400 font-bold mt-2">Scale your logistics with our automated hub network.</p>
+            </div>
+            <!-- Swiper Controls -->
+            <div class="hidden sm:flex gap-4">
+                <button class="swiper-prev w-14 h-14 bg-gray-50 border border-gray-100 rounded-full flex items-center justify-center hover:bg-[#054a32] hover:text-white transition-all">&larr;</button>
+                <button class="swiper-next w-14 h-14 bg-gray-50 border border-gray-100 rounded-full flex items-center justify-center hover:bg-[#054a32] hover:text-white transition-all">&rarr;</button>
+            </div>
+        </div>
+
+        <div class="swiper mySwiper px-6 lg:px-20 overflow-visible">
+            <div class="swiper-wrapper">
+                @foreach([
+                    ['icon' => '🛰️', 'title' => 'Real-time Telemetry', 'bg' => 'bg-blue-50', 'text' => 'text-blue-600'],
+                    ['icon' => '🛡️', 'title' => 'Insured Transit', 'bg' => 'bg-purple-50', 'text' => 'text-purple-600'],
+                    ['icon' => '⚡', 'title' => 'Express Priority', 'bg' => 'bg-orange-50', 'text' => 'text-orange-600'],
+                    ['icon' => '🚛', 'title' => 'Fleet Automation', 'bg' => 'bg-green-50', 'text' => 'text-[#054a32]'],
+                ] as $svc)
+                <div class="swiper-slide h-auto">
+                    <div class="{{ $svc['bg'] }} p-12 rounded-[4rem] h-full space-y-8 border border-white hover:scale-[1.02] transition-transform duration-500">
+                        <div class="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-4xl shadow-sm">{{ $svc['icon'] }}</div>
+                        <h3 class="text-3xl font-black text-gray-900 leading-tight">{{ $svc['title'] }}</h3>
+                        <p class="text-gray-500 font-medium text-lg leading-relaxed italic">Dedicated intercity routing with 24/7 hub monitoring.</p>
+                        <a href="/services" class="inline-block text-[10px] font-black uppercase {{ $svc['text'] }} tracking-[0.2em] hover:underline">Learn Strategy &rarr;</a>
                     </div>
                 </div>
+                @endforeach
             </div>
-
         </div>
-    </div>
-</main>
+    </section>
 
-</body>
+</div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        new Swiper(".mySwiper", {
+            slidesPerView: 1.1,
+            spaceBetween: 20,
+            centeredSlides: false,
+            navigation: { nextEl: ".swiper-next", prevEl: ".swiper-prev" },
+            breakpoints: {
+                640: { slidesPerView: 2, spaceBetween: 30 },
+                1024: { slidesPerView: 3, spaceBetween: 40 },
+            }
+        });
+    });
+</script>
 @endsection

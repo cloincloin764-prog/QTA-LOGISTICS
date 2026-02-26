@@ -97,4 +97,13 @@ class User extends Authenticatable
     {
         return $this->role === self::ROLE_DRIVER;
     }
+    public function customNotifications()
+{
+    return $this->hasMany(Notification::class)->latest();
+}
+
+public function unreadNotificationsCount()
+{
+    return $this->hasMany(Notification::class)->where('is_read', false)->count();
+}
 }

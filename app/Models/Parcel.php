@@ -172,5 +172,16 @@ class Parcel extends Model
             'status'  => $newStatus,
             'comment' => $comment,
         ]);
+         $this->update(['status' => $newStatus]);
+
+    // TRIGGER NOTIFICATION
+    $message = "Your parcel #{$this->tracking_code} is now " . strtoupper($newStatus);
+    
+    // Notify the Customer (Sender)
+    if ($this->user) {
+        $this->user->notify(new ParcelStatusUpdated($this, $message));
+    }
+    
+    // Record in history (Already done in your model)
     }
 }

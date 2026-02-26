@@ -1,59 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Shipment | QTA Logistics</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Inter', sans-serif; } </style>
-</head>
-<body class="bg-[#fdf2f4] flex items-center justify-center min-h-screen p-6">
+@extends('layouts.guest')
 
-    <div class="max-w-xl w-full">
-        <!-- Brand Header -->
-        <div class="flex justify-between items-center mb-12">
-            <div class="bg-black text-white px-4 py-2 font-black tracking-tighter text-xl italic">QTA LOGISTICS</div>
-            <div class="text-blue-600 font-bold tracking-widest text-xs uppercase">Premium Delivery</div>
+@section('content')
+<div class="min-h-[80vh] flex flex-col items-center justify-center px-6 relative overflow-hidden">
+    
+    <!-- Background Decor -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-50/50 rounded-full blur-[120px] -z-10"></div>
+
+    <div class="max-w-2xl w-full text-center space-y-12">
+        <div class="space-y-4">
+            <h1 class="text-6xl font-black text-gray-900 tracking-tighter uppercase italic">Track & Trace</h1>
+            <p class="text-gray-500 font-medium">Enter your unique tracking code below to see the journey of your parcel.</p>
         </div>
 
-        <div class="bg-white rounded-3xl p-10 shadow-2xl shadow-rose-200/50 border border-white">
-            <h1 class="text-2xl font-bold text-gray-800 mb-2">Track your shipment</h1>
-            <p class="text-gray-500 text-sm mb-8">Enter your 10-digit tracking number to see live status.</p>
-
-            <form onsubmit="event.preventDefault(); window.location.href='/track/' + document.getElementById('code').value" class="space-y-4">
-                @if(session('error'))
-                    <div class="p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100 mb-4">
-                        {{ session('error') }}
-                    </div>
-                @endif
-
-                <div class="relative">
-                    <input type="text" id="code" placeholder="#341918713810" required 
-                           class="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl outline-none transition-all text-lg font-mono font-bold tracking-widest text-gray-800">
-                </div>
+        <!-- Professional Search Terminal -->
+        <div class="bg-white p-4 rounded-[3rem] shadow-2xl shadow-gray-200 border border-gray-100 flex items-center gap-4">
+            <div class="w-14 h-14 bg-gray-50 rounded-[1.5rem] flex items-center justify-center text-gray-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); window.location.href='/track/' + document.getElementById('code').value" class="flex-1 flex gap-4">
+                <input type="text" id="code" placeholder="Enter Tracking Code (e.g. TRK-XXXX)" required 
+                       class="flex-1 bg-transparent border-none focus:ring-0 text-xl font-bold placeholder-gray-300 uppercase tracking-widest">
                 
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-5 rounded-2xl shadow-xl shadow-blue-500/30 transition-all active:scale-95 uppercase tracking-widest text-sm">
-                    Track Now
+                <button type="submit" class="bg-[#054a32] text-white px-8 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all">
+                    Track
                 </button>
             </form>
         </div>
 
-        <div class="mt-12 grid grid-cols-3 gap-4 text-center">
-            <div>
-                <p class="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Global</p>
-                <p class="text-xs font-bold text-gray-400">Intercity</p>
+        @if(session('error'))
+            <div class="bg-red-50 text-red-600 p-4 rounded-2xl text-xs font-bold border border-red-100 inline-block px-8">
+                {{ session('error') }}
             </div>
-            <div>
-                <p class="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Speed</p>
-                <p class="text-xs font-bold text-gray-400">Express</p>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Support</p>
-                <p class="text-xs font-bold text-gray-400">24/7 Live</p>
-            </div>
+        @endif
+
+        <div class="pt-10 flex justify-center gap-12 grayscale opacity-30">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b3/DHL_Express_logo.svg" class="h-4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a2/FedEx_Express_logo.svg" class="h-4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b9/UPS_Logo.svg" class="h-4">
         </div>
     </div>
-
-</body>
-</html>
+</div>
+@endsection

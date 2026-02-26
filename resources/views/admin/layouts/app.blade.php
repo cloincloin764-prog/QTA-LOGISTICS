@@ -3,141 +3,177 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'LMS - Logistics') }} - Admin</title>
-
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+    <title>QTA Logistics | Terminal</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     <style>
         [x-cloak] { display: none !important; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .sidebar-active { background-color: #054a32; color: white !important; box-shadow: 0 20px 25px -5px rgba(5, 74, 50, 0.2); }
     </style>
 </head>
+<body class="bg-[#F8FAFC] dark:bg-[#050505] text-slate-900 h-screen overflow-hidden flex"
+      x-data="{ sidebarOpen: true }">
 
-<body class="bg-[#F3F4F6] dark:bg-[#141414] text-[#1b1b18] font-sans h-screen overflow-hidden flex"
-      x-data="{ 
-          sidebarOpen: window.innerWidth >= 1024, 
-          mobileOpen: false,
-          currentDropdown: null,
-          toggleDropdown(name) {
-              this.currentDropdown = this.currentDropdown === name ? null : name;
-          }
-      }"
-      @resize.window="sidebarOpen = window.innerWidth >= 1024 ? true : false">
-
-    <!-- Mobile Overlay -->
-    <div x-show="mobileOpen" @click="mobileOpen = false" x-transition.opacity class="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"></div>
-
-    <!-- SIDEBAR -->
-    <aside :class="sidebarOpen ? 'w-64' : 'w-20'"
-           class="fixed lg:static inset-y-0 left-0 z-50 flex flex-col h-screen bg-[#0a0a0a] text-gray-400 transition-all duration-300 ease-in-out border-r border-gray-800"
-           :style="mobileOpen ? 'transform: translateX(0);' : (window.innerWidth < 1024 ? 'transform: translateX(-100%);' : '')">
+    <!-- SIDEBAR CONTAINER -->
+    <aside :class="sidebarOpen ? 'w-80' : 'w-24'" 
+           class="bg-[#0A0A0A] border-r border-white/5 h-screen flex flex-col transition-all duration-500 z-50 shadow-2xl">
         
-        <!-- Brand -->
-        <div class="h-16 flex items-center justify-center border-b border-gray-800">
-            <div class="flex items-center gap-2 font-bold text-white text-xl">
-                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">L</div>
-                <span x-show="sidebarOpen" x-transition class="tracking-wide">LOGISTICS</span>
-            </div>
-        </div>
-
-        <!-- Menu -->
-<!-- Inside Sidebar Menu -->
-<div class="flex-1 overflow-y-auto py-6 flex flex-col gap-2 px-3 no-scrollbar">
-    
-    <!-- Dashboard -->
-    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-900 {{ request()->routeIs('admin.dashboard') ? 'bg-gray-900 text-white' : '' }}">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-        <span x-show="sidebarOpen">Overview</span>
-    </a>
-
-    <!-- Parcel Management -->
-    <div>
-        <button @click="sidebarOpen ? toggleDropdown('parcels') : sidebarOpen = true" class="w-full flex items-center justify-between gap-3 px-3 py-3 rounded-lg hover:bg-gray-900 transition-colors">
-            <div class="flex items-center gap-3">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                <span x-show="sidebarOpen">Parcel Mgt</span>
-            </div>
-            <svg x-show="sidebarOpen" :class="currentDropdown === 'parcels' ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <div x-show="currentDropdown === 'parcels' && sidebarOpen" x-collapse x-cloak class="bg-gray-900/50 rounded-lg mt-1 mx-2 overflow-hidden">
-            <a href="{{ route('admin.parcels.index') }}" class="block pl-12 pr-4 py-2 text-sm hover:text-blue-400">All Parcels</a>
-            <a href="{{ route('admin.parcels.create') }}" class="block pl-12 pr-4 py-2 text-sm hover:text-blue-400">Add Parcel</a>
-        </div>
-    </div>
-
-<!-- Inside sidebar menu -->
-<div>
-    <button @click="sidebarOpen ? toggleDropdown('drivers') : sidebarOpen = true" 
-            class="w-full flex items-center justify-between gap-3 px-3 py-3 rounded-lg hover:bg-gray-900 transition-colors">
-        <div class="flex items-center gap-3">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-            <span x-show="sidebarOpen">Drivers</span>
-        </div>
-        <svg x-show="sidebarOpen" :class="currentDropdown === 'drivers' ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"></path></svg>
-    </button>
-    <div x-show="currentDropdown === 'drivers' && sidebarOpen" x-collapse x-cloak class="bg-gray-900/50 rounded-lg mt-1 mx-2 overflow-hidden">
-        <a href="{{ route('admin.drivers.index') }}" class="block pl-12 pr-4 py-2 text-sm hover:text-blue-400">All Drivers</a>
-        <a href="{{ route('admin.drivers.create') }}" class="block pl-12 pr-4 py-2 text-sm hover:text-blue-400">Add Driver</a>
-    </div>
-</div>
-</div>
-
-<!-- Sidebar Footer (Profile & Logout) -->
-<div class="p-4 border-t border-gray-800 bg-[#050505]">
-    <div class="flex items-center gap-3">
-        <!-- User Avatar -->
-        <div class="relative min-w-[40px]">
-            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=0066FF&color=fff" 
-                 class="w-10 h-10 rounded-full border-2 border-gray-700 shadow-sm" alt="User">
-            <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#0a0a0a] rounded-full"></span>
-        </div>
-        
-        <!-- User Info -->
-        <div x-show="sidebarOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="flex flex-col overflow-hidden flex-1">
-            <span class="text-white text-sm font-bold truncate">{{ auth()->user()->name }}</span>
-            <span class="text-[10px] text-gray-500 uppercase font-black tracking-widest">{{ auth()->user()->role }}</span>
-        </div>
-        
-        <!-- Logout Button -->
-        <div x-show="sidebarOpen">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" 
-                        class="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all group" 
-                        title="Logout">
-                    <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
-    </aside>
-
-    <!-- MAIN CONTENT WRAPPER -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden relative">
-        <!-- Header -->
-        <header class="h-16 bg-white dark:bg-[#0a0a0a] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6">
-            <button @click="mobileOpen = true" class="lg:hidden text-gray-500">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            </button>
-            <div class="ml-auto flex items-center gap-4">
-                <!-- Search for Tracking Code (SRS 3.5) -->
-                <div class="relative hidden md:block">
-                    <input type="text" placeholder="Track Parcel (Enter Code)..." class="bg-gray-100 dark:bg-gray-900 border-none rounded-lg px-4 py-2 text-sm w-64 focus:ring-2 focus:ring-blue-500">
+        <!-- Logo Area -->
+        <div class="h-24 flex items-center px-8 border-b border-white/5">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-[#054a32] rounded-2xl flex items-center justify-center shadow-lg">
+                    <span class="text-white font-black text-xl italic">Q</span>
+                </div>
+                <div x-show="sidebarOpen" x-transition class="flex flex-col">
+                    <span class="text-white font-black tracking-tighter text-lg uppercase italic">Logistics</span>
+                    <span class="text-[#054a32] text-[9px] font-black uppercase tracking-[0.3em]">Terminal v2.0</span>
                 </div>
             </div>
+        </div>
+
+        <!-- Navigation Menus (Role Based) -->
+        <nav class="flex-1 overflow-y-auto py-8 px-4 space-y-10 no-scrollbar">
+
+            @php $user = auth()->user(); @endphp
+
+            {{-- 1. ADMIN & STAFF SECTION --}}
+            @if($user->isAdmin() || $user->isStaff())
+                <div class="space-y-2">
+                    <p x-show="sidebarOpen" class="px-6 text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-4">Management</p>
+                    
+                    <a href="{{ route('admin.dashboard') }}" 
+                       class="flex items-center gap-4 px-6 h-16 rounded-2xl transition-all {{ request()->routeIs('admin.dashboard') ? 'sidebar-active' : 'hover:bg-white/5 text-gray-400 hover:text-white' }}">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                        <span x-show="sidebarOpen" class="font-bold text-sm tracking-tight uppercase">Dashboard</span>
+                    </a>
+
+                    <a href="{{ route('admin.parcels.index') }}" 
+                       class="flex items-center gap-4 px-6 h-16 rounded-2xl transition-all {{ request()->routeIs('admin.parcels.*') ? 'sidebar-active' : 'hover:bg-white/5 text-gray-400 hover:text-white' }}">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        <span x-show="sidebarOpen" class="font-bold text-sm tracking-tight uppercase">Shipment Deck</span>
+                    </a>
+
+                    <a href="{{ route('admin.drivers.index') }}" 
+                       class="flex items-center gap-4 px-6 h-16 rounded-2xl transition-all {{ request()->routeIs('admin.drivers.*') ? 'sidebar-active' : 'hover:bg-white/5 text-gray-400 hover:text-white' }}">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <span x-show="sidebarOpen" class="font-bold text-sm tracking-tight uppercase">Fleet Team</span>
+                    </a>
+                </div>
+            @endif
+
+            {{-- 2. CUSTOMER ONLY SECTION --}}
+            @if($user->isCustomer())
+                <div class="space-y-2">
+                    <p x-show="sidebarOpen" class="px-6 text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-4">My Dashboard</p>
+                    
+                    <a href="{{ route('customer.dashboard') }}" 
+                       class="flex items-center gap-4 px-6 h-16 rounded-2xl transition-all {{ request()->routeIs('customer.dashboard') ? 'sidebar-active' : 'hover:bg-white/5 text-gray-400 hover:text-white' }}">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span x-show="sidebarOpen" class="font-bold text-sm tracking-tight uppercase">My Shipments</span>
+                    </a>
+
+                    <a href="{{ route('customer.parcels.create') }}" 
+                       class="flex items-center gap-4 px-6 h-16 rounded-2xl transition-all {{ request()->routeIs('customer.parcels.create') ? 'sidebar-active' : 'hover:bg-white/5 text-gray-400 hover:text-white' }}">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                        <span x-show="sidebarOpen" class="font-bold text-sm tracking-tight uppercase">Book Shipment</span>
+                    </a>
+                </div>
+            @endif
+
+            {{-- 3. SHARED SYSTEM SECTION --}}
+            <div class="space-y-2 pt-10 border-t border-white/5">
+                <p x-show="sidebarOpen" class="px-6 text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-4">Account</p>
+                
+                <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 px-6 h-14 rounded-2xl hover:bg-white/5 text-gray-500 hover:text-white transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <span x-show="sidebarOpen" class="text-xs font-bold uppercase">Settings</span>
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center gap-4 px-6 h-14 rounded-2xl hover:bg-red-500/10 text-red-500/70 hover:text-red-500 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"></path></svg>
+                        <span x-show="sidebarOpen" class="text-xs font-bold uppercase text-left">Terminate Session</span>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <!-- Profile Bar -->
+        <div class="p-6 bg-black border-t border-white/5">
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=054a32&color=fff" class="w-12 h-12 rounded-xl border border-white/10 shadow-lg">
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-4 border-black rounded-full"></div>
+                </div>
+                <div x-show="sidebarOpen" class="flex-1 overflow-hidden">
+                    <p class="text-white text-xs font-black uppercase truncate">{{ $user->name }}</p>
+                    <p class="text-[9px] text-[#054a32] font-black uppercase tracking-widest">{{ $user->role }} Member</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN PANEL -->
+    <main class="flex-1 flex flex-col overflow-hidden relative">
+        <!-- Top Bar -->
+        <header class="h-20 bg-white/80 dark:bg-black/50 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-10 z-40">
+            <button @click="sidebarOpen = !sidebarOpen" class="text-slate-400 hover:text-[#054a32] transition-all">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+            </button>
+            <div class="flex items-center gap-6">
+                <a href="{{ route('tracking.index') }}" class="text-[10px] font-black uppercase tracking-widest text-[#054a32] border border-[#054a32]/20 px-4 py-2 rounded-xl hover:bg-[#054a32] hover:text-white transition-all">Live Tracker</a>
+            </div>
+            <!-- Inside the <header> in admin/layouts/app.blade.php -->
+<div class="flex items-center gap-6" x-data="{ openNotifications: false }">
+    
+    <!-- Notification Bell -->
+    <div class="relative">
+        <button @click="openNotifications = !openNotifications" class="p-2 text-gray-400 hover:text-[#054a32] transition-all relative">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+            
+            @if(auth()->user()->unreadNotifications->count() > 0)
+                <span class="absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white text-[10px] font-black flex items-center justify-center rounded-full border-2 border-white">
+                    {{ auth()->user()->unreadNotifications->count() }}
+                </span>
+            @endif
+        </button>
+
+        <!-- Dropdown Panel -->
+        <div x-show="openNotifications" @click.away="openNotifications = false" x-cloak
+             class="absolute right-0 mt-4 w-80 bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden z-50">
+            <div class="p-5 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Notifications</span>
+                <a href="#" class="text-[10px] font-bold text-[#054a32] uppercase">Clear All</a>
+            </div>
+            
+            <div class="max-h-96 overflow-y-auto no-scrollbar">
+                @forelse(auth()->user()->notifications->take(5) as $notification)
+                    <div class="p-5 border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer">
+                        <p class="text-xs font-bold text-gray-800">{{ $notification->data['message'] }}</p>
+                        <p class="text-[10px] text-gray-400 mt-1 uppercase font-bold">{{ $notification->created_at->diffForHumans() }}</p>
+                    </div>
+                @empty
+                    <div class="p-10 text-center">
+                        <p class="text-[10px] font-black text-gray-300 uppercase tracking-widest">No active alerts</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+</div>
         </header>
 
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[#F3F4F6] dark:bg-[#141414] p-4 lg:p-6">
+        <!-- Content Shell -->
+        <div class="flex-1 overflow-x-hidden overflow-y-auto p-8 lg:p-12 dark:bg-[#050505]">
             @yield('content')
-        </main>
-    </div>
+        </div>
+    </main>
+
 </body>
 </html>

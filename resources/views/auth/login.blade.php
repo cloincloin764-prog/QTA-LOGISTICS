@@ -1,47 +1,40 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@extends('layouts.guest')
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+@section('content')
+<div class="min-h-[80vh] flex items-center justify-center px-6 py-20">
+    <div class="max-w-md w-full bg-white p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-gray-200/50">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Welcome Back</h1>
+            <p class="text-sm text-gray-400 mt-2 font-medium">Access your logistics dashboard terminal.</p>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <form method="POST" action="{{ route('login') }}" class="space-y-6">
+            @csrf
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-4">Email Address</label>
+                <input type="email" name="email" required class="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-green-100">
+            </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+            <div>
+                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-4">Secure Password</label>
+                <input type="password" name="password" required class="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-green-100">
+            </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            <div class="flex items-center justify-between px-2">
+                <label class="flex items-center gap-2 text-xs text-gray-500">
+                    <input type="checkbox" class="rounded border-gray-200 text-[#054a32] focus:ring-0"> Remember me
+                </label>
+                <a href="#" class="text-xs font-bold text-[#054a32] hover:underline">Forgot?</a>
+            </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+            <button type="submit" class="w-full btn-primary py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl">
+                Login Terminal
+            </button>
+        </form>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+        <p class="text-center mt-8 text-xs text-gray-400">
+            New to QTA? <a href="{{ route('register') }}" class="font-bold text-[#054a32] hover:underline">Create Business Account</a>
+        </p>
+    </div>
+</div>
+@endsection
